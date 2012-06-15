@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <AutoCompleteTextView
+            android:id="@+id/depart"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_depart"/> 
+             <AutoCompleteTextView
+            android:id="@+id/dest"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_dest"/> 
+       <EditText
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="@string/hint_date"  >
+            <requestFocus />
+        </EditText>        
+        <ImageView android:id="@+id/codeImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/> 
+        <EditText
+            android:id="@+id/code"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" 
+            android:hint="@string/hint_code"/> 
+        <Button android:id="@+id/search" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="查询" />
+        
+    </LinearLayout>
+    <TableLayout android:id="@+id/tickeyLayout"  android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:stretchColumns="*" >
+
+        </TableLayout>
+
+</LinearLayout>
