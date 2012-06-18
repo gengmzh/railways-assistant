@@ -28,7 +28,7 @@
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name=".activity.TicketofficeActivity"
+            android:name=".activity.AssistantActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +38,17 @@
         </activity>
         <activity
             android:name=".activity.TicketActivity"
-            android:label="@string/app_name" >
+            android:label="@string/title_ticket_search" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.TicketSearchFormActivity"
+            android:label="@string/title_ticket_search"
+            android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
 

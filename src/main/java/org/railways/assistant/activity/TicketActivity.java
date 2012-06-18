@@ -1,6 +1,5 @@
 package org.railways.assistant.activity;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,8 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.railways.api.IdentifyingClient;
-import org.railways.api.Response;
 import org.railways.api.StationType;
 import org.railways.api.TrainType;
 import org.railways.api.ticket.Ticket;
@@ -19,18 +16,13 @@ import org.railways.assistant.R;
 import org.railways.assistant.TicketApplication;
 
 import android.app.Activity;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * 余票
@@ -40,11 +32,10 @@ import android.widget.Toast;
  */
 public class TicketActivity extends Activity {
 
+	public static final int REQUEST_SEARCH_FORM = 11;
+
 	static final DateFormat format = new SimpleDateFormat("yyyyMMdd");
 	TicketApplication app;
-	ImageView image;
-	TableLayout tickeyLayout;
-	IdentifyingClient identifyingClient;
 	TicketClient ticketClient;
 
 	@Override
@@ -52,39 +43,46 @@ public class TicketActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ticket);
 		app = (TicketApplication) getApplication();
-		// search
-		Button search = (Button) findViewById(R.id.search);
-		search.setOnClickListener(new SearchListener());
-		// image
-		image = (ImageView) findViewById(R.id.codeImage);
-		image.setOnClickListener(new CodeImageListener());
-		// table
-		tickeyLayout = (TableLayout) findViewById(R.id.tickeyLayout);
-		// client
-		identifyingClient = new IdentifyingClient(5000, 10000);
 		ticketClient = new TicketClient(5000, 10000);
+		// search
+		openSearchForm();
+		View view = findViewById(R.id.openForm);
+		view.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				openSearchForm();
+			}
+		});
+	}
+
+	void openSearchForm() {
+		Intent i = new Intent(this, TicketSearchFormActivity.class);
+		startActivityForResult(i, REQUEST_SEARCH_FORM);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new ImageTask().execute();
+		getParent().setTitle(this.getTitle());
 	}
 
-	class SearchListener implements OnClickListener {
-		@Override
-		public void onClick(View arg0) {
-			TextView depart = (TextView) findViewById(R.id.depart);
-			TextView dest = (TextView) findViewById(R.id.dest);
-			TextView date = (TextView) findViewById(R.id.date);
-			TextView code = (TextView) findViewById(R.id.code);
-			new SearchTask().execute(toString(depart.getText()), toString(dest.getText()), toString(date.getText()),
-					toString(code.getText()));
-		}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case REQUEST_SEARCH_FORM:
+			if (resultCode == Activity.RESULT_OK) {
+				String depart = data.getStringExtra(String.valueOf(R.id.depart));
+				String dest = data.getStringExtra(String.valueOf(R.id.dest));
+				String date = data.getStringExtra(String.valueOf(R.id.date));
+				String code = data.getStringExtra(String.valueOf(R.id.code));
+				new SearchTask().execute(depart, dest, date, code);
+			}
+			break;
 
-		String toString(CharSequence seq) {
-			return seq != null ? seq.toString() : null;
+		default:
+			break;
 		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	class SearchTask extends AsyncTask<String, Integer, List<Ticket>> {
@@ -130,41 +128,6 @@ public class TicketActivity extends Activity {
 				view.setText(t.toString());
 				row.addView(view);
 				tickeyLayout.addView(row);
-			}
-		}
-	}
-
-	class CodeImageListener implements OnClickListener {
-		@Override
-		public void onClick(View arg0) {
-			new ImageTask().execute();
-		}
-	}
-
-	class ImageTask extends AsyncTask<String, Integer, Response> {
-		@Override
-		protected Response doInBackground(String... arg0) {
-			try {
-				return identifyingClient.request();
-			} catch (Exception e) {
-				Log.e(ImageTask.class.getSimpleName(), "request random code failed");
-				Toast.makeText(getApplicationContext(), "获取验证码失败", Toast.LENGTH_SHORT).show();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Response result) {
-			super.onPostExecute(result);
-			if (result != null) {
-				String cookie = result.getCookie();
-				Log.i(ImageTask.class.getSimpleName(), cookie != null && cookie.length() > 0 ? cookie : "no cookie");
-				app.setCookies(cookie);
-				image.setImageBitmap(BitmapFactory.decodeStream(result.getContent()));
-				try {
-					result.close();
-				} catch (IOException e) {
-				}
 			}
 		}
 	}

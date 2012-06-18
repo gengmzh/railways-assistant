@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
 
-public class TicketofficeActivity extends TabActivity {
+public class AssistantActivity extends TabActivity {
 
 	TicketApplication app;
 
@@ -47,7 +47,7 @@ public class TicketofficeActivity extends TabActivity {
 					app.setIctCode(ictClient.request());
 					break;
 				} catch (Exception e) {
-					Log.e(TicketofficeActivity.class.getSimpleName(), i + ": request IctCode failed");
+					Log.e(AssistantActivity.class.getSimpleName(), i + ": request IctCode failed");
 				}
 			}
 			return null;
