@@ -1,9 +1,13 @@
 package org.railways.assistant.activity;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.railways.api.IdentifyingClient;
 import org.railways.api.Response;
+import org.railways.api.ticket.TicketForm;
 import org.railways.assistant.R;
 import org.railways.assistant.TicketApplication;
 
@@ -24,7 +28,7 @@ import android.widget.Toast;
 
 public class TicketSearchFormActivity extends Activity {
 
-	// static final DateFormat format = new SimpleDateFormat("yyyyMMdd");
+	static final DateFormat format = new SimpleDateFormat("yyyyMMdd");
 	TicketApplication app;
 	TextView departView;
 	TextView destView;
@@ -32,6 +36,7 @@ public class TicketSearchFormActivity extends Activity {
 	TextView codeView;
 	ImageView codeImage;
 	IdentifyingClient identifyingClient;
+	TicketForm form;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +56,26 @@ public class TicketSearchFormActivity extends Activity {
 		search.setOnClickListener(new SearchListener());
 		// client
 		identifyingClient = new IdentifyingClient(5000, 10000);
+		form = (TicketForm) getIntent().getExtras().get(TicketForm.class.getSimpleName());
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		new CodeImageTask().execute();
+		// reset
+		if (form != null) {
+			Date date = form.getDate();
+			if (date != null) {
+				dateView.setText(format.format(date));
+			}
+			if (form.getDeparture() != null) {
+				departView.setText(form.getStartStation());
+			}
+			if (form.getDestination() != null) {
+				destView.setText(form.getArriveStation());
+			}
+		}
 	}
 
 	class CodeImageListener implements OnClickListener {
@@ -69,12 +88,14 @@ public class TicketSearchFormActivity extends Activity {
 	class CodeImageTask extends AsyncTask<String, Integer, Response> {
 		@Override
 		protected Response doInBackground(String... arg0) {
+			Log.i(CodeImageTask.class.getSimpleName(), "request code image");
+			// for (int i = 0; i < app.getRetryTimes(); i++) {
 			try {
 				return identifyingClient.request();
 			} catch (Exception e) {
 				Log.e(CodeImageTask.class.getSimpleName(), "request random code failed");
-				Toast.makeText(getApplicationContext(), "获取验证码失败", Toast.LENGTH_SHORT).show();
 			}
+			// }
 			return null;
 		}
 
@@ -90,6 +111,8 @@ public class TicketSearchFormActivity extends Activity {
 					result.close();
 				} catch (IOException e) {
 				}
+			} else {
+				Toast.makeText(getApplicationContext(), "获取验证码失败", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -97,44 +120,37 @@ public class TicketSearchFormActivity extends Activity {
 	class SearchListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
-			boolean illegal = false;
 			CharSequence depart = departView.getText();
 			if (depart == null || depart.length() == 0) {
-				illegal = true;
-				departView.setHintTextColor(android.R.color.background_light);
+				Toast.makeText(getApplicationContext(), "请输入发站", Toast.LENGTH_SHORT).show();
+				return;
 			}
+			form.setDeparture(depart.toString());
 			CharSequence dest = destView.getText();
 			if (dest == null || dest.length() == 0) {
-				illegal = true;
-				destView.setHintTextColor(android.R.color.background_light);
+				Toast.makeText(getApplicationContext(), "请输入到站", Toast.LENGTH_SHORT).show();
+				return;
 			}
-			// Date date = null;
+			form.setDestination(dest.toString());
 			CharSequence date = dateView.getText();
-			// if (dateStr != null && dateStr.length() > 0) {
-			// try {
-			// date = format.parse(dateStr.toString());
-			// } catch (ParseException e) {
-			// Log.e(TicketSearchFormActivity.class.getSimpleName(),
-			// "parse date " + dateStr + " failed");
-			// }
-			// }
 			if (date == null || date.length() == 0) {
-				illegal = true;
-				dateView.setHintTextColor(android.R.color.background_light);
+				Toast.makeText(getApplicationContext(), "请输入日期", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			try {
+				form.setDate(format.parse(date.toString()));
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), "日期填写错误，格式如20120618", Toast.LENGTH_SHORT).show();
+				return;
 			}
 			CharSequence code = codeView.getText();
 			if (code == null || code.length() == 0) {
-				illegal = true;
-				codeView.setHintTextColor(android.R.color.background_light);
-			}
-			if (illegal) {
+				Toast.makeText(getApplicationContext(), "请输入验证码", Toast.LENGTH_SHORT).show();
 				return;
 			}
+			form.setRandomCode(code.toString());
 			Intent i = new Intent();
-			i.putExtra(String.valueOf(R.id.depart), depart.toString());
-			i.putExtra(String.valueOf(R.id.dest), dest.toString());
-			i.putExtra(String.valueOf(R.id.date), date.toString());
-			i.putExtra(String.valueOf(R.id.code), code.toString());
+			i.putExtra(TicketForm.class.getSimpleName(), form);
 			TicketSearchFormActivity.this.setResult(Activity.RESULT_OK, i);
 			TicketSearchFormActivity.this.finish();
 		}

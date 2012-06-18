@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="260dp"
+    android:layout_width="255dp"
     android:layout_height="260dp"
     android:padding="5dp"
     android:stretchColumns="*" >
@@ -8,6 +8,7 @@
     <TableRow>
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="余票查询" />
@@ -25,13 +26,14 @@
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_span="2"
             android:hint="@string/hint_date"
             android:inputType="date" >
 
             <requestFocus />
         </EditText>
     </TableRow>
-    
+
     <TableRow>
 
         <AutoCompleteTextView
@@ -51,9 +53,10 @@
 
         <ImageView
             android:id="@+id/codeImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical" />
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/image_border" />
 
         <EditText
             android:id="@+id/code"

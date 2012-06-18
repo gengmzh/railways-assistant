@@ -1,6 +1,7 @@
 package org.railways.assistant.activity;
 
 import org.railways.api.ticket.ICTCodeClient;
+import org.railways.api.ticket.IctCode;
 import org.railways.assistant.R;
 import org.railways.assistant.TicketApplication;
 
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 public class AssistantActivity extends TabActivity {
 
@@ -38,19 +40,28 @@ public class AssistantActivity extends TabActivity {
 		new AppInitTask().execute();
 	}
 
-	class AppInitTask extends AsyncTask<String, Integer, String> {
+	class AppInitTask extends AsyncTask<String, Integer, IctCode> {
 		@Override
-		protected String doInBackground(String... arg0) {
+		protected IctCode doInBackground(String... arg0) {
 			ICTCodeClient ictClient = new ICTCodeClient(5000, 10000);
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < app.getRetryTimes(); i++) {
 				try {
-					app.setIctCode(ictClient.request());
-					break;
+					return ictClient.request();
 				} catch (Exception e) {
 					Log.e(AssistantActivity.class.getSimpleName(), i + ": request IctCode failed");
 				}
 			}
 			return null;
+		}
+
+		@Override
+		protected void onPostExecute(IctCode result) {
+			super.onPostExecute(result);
+			if (result != null) {
+				app.setIctCode(result);
+			} else {
+				Toast.makeText(getApplicationContext(), "联网失败，应用未能成功初始化", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 

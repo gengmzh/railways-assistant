@@ -7,18 +7,16 @@
     <TableRow>
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_span="2"
             android:hint="@string/title_ticket_search" />
-
-        <ZoomButton
-            android:id="@+id/openForm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/btn_plus" />
     </TableRow>
 
     <View
+        android:id="@+id/line"
         android:layout_height="1dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="5dp"
