@@ -132,31 +132,26 @@ public class TicketActivity extends Activity {
 				// first row
 				TableRow row = new TableRow(getApplicationContext());
 				TextView view = new TextView(getApplicationContext());
-				view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				view.setText(t.getTrainNumber().getCode());
 				row.addView(view);
 				view = new TextView(getApplicationContext());
-				view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				view.setText(t.getTrainNumber().getDeparture() + "->" + t.getTrainNumber().getDestination() + " "
 						+ t.getType());
 				row.addView(view);
 				view = new TextView(getApplicationContext());
-				view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				view.setText(t.getStartTime() + "->" + t.getEndTime() + " " + t.getDuration());
 				row.addView(view);
 				table.addView(row);
 				// second row
 				row = new TableRow(getApplicationContext());
-				LayoutParams args = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				LayoutParams args = new LayoutParams();
 				args.setMargins(0, 0, 0, 1);
 				row.setLayoutParams(args);
 				String ts = format(t);
 				view = new TextView(getApplicationContext());
-				view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				view.setText(ts.length() > 0 ? "有票" : "没票");
 				row.addView(view);
 				view = new TextView(getApplicationContext());
-				view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				view.setText(ts);
 				row.addView(view);
 				table.addView(row);
