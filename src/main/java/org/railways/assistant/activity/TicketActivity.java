@@ -141,7 +141,7 @@ public class TicketActivity extends Activity {
 				view.setText(ts);
 				row.addView(view);
 				table.addView(row);
-				// line
+				// TODO line
 				View line = new View(getApplicationContext());
 				TableLayout.LayoutParams args = new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, 1);
 				args.setMargins(0, 3, 0, 3);
